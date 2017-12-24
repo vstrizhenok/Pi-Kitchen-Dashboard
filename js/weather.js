@@ -18,23 +18,51 @@
 	var unit = 'c';
 	
 	// Format for date and time
-	var formatTime = 'H : mm' // ss
-	var formatDate = 'dddd, MMMM Do'
+	var formatTime = 'H : mm'; // ss
+	var formatDate = 'dddd, MMMM Do';
 
 	// Yahoo! query interval (milliseconds)
 	// Default is every 15 minutes. Be reasonable. Don't query Yahoo every 500ms.
 	var waitBetweenWeatherQueriesMS = 900000;
+
+
+    var morning_images = [
+        'dawn-sun-mountain-landscape-65865.jpeg',
+		'pexels-photo-258211.jpeg',
+		'pexels-photo-417245.jpeg'
+    ], everning_images = [
+    	'pexels-photo-122990.jpeg',
+		'pexels-photo-460191.jpeg',
+		'pexels-photo-458858.jpeg'
+	], daylight_images = [
+		'pexels-photo-619950.jpeg',
+		'pexels-photo-629167.jpeg',
+		'pexels-photo-621876.jpeg',
+		'pexels-photo-554463.jpeg',
+		'pexels-photo-629160.jpeg'
+	], night_images = [
+		'pexels-photo-733475.jpeg',
+		'pexels-photo-176851.jpeg',
+		'solar-system-emergence-spitzer-telescope-telescope-41951.jpeg',
+		'pexels-photo-172489.jpeg',
+		'pexels-photo-378556.jpeg',
+		'pexels-photo-92248.jpeg',
+		'road-traffic-night-street.jpg',
+		'pexels-photo-355465.jpeg'
+	];
 
 	// You're done!
 	/*********************************/
 	/*****************************************************/
 	/*************************************************************************/
 
-	function resolveTemp(temp) {
+	function resolveTemp(temp, sign) {
+		sign || (sign = '');
 		if (unit === 'c' || unit === 'C') {
-			temp = '' + Math.round((parseInt(temp) - 32) / 1.8);
+			var value = Math.round((parseInt(temp) - 32) / 1.8);
+			temp = '' + (value > 0 ? sign : '') + value;
 		}
-		temp += '&deg;'
+		temp += '&deg;';
 		return temp;
 	}
 
@@ -81,10 +109,10 @@
 			desc.html(forecast.text);
 		}
 		if (high.length) {
-			high.html(resolveTemp(forecast.high));
+			high.html(resolveTemp(forecast.high, '+'));
 		}
 		if (low.length) {
-			low.html(resolveTemp(forecast.low));
+			low.html(resolveTemp(forecast.low, '-'));
 		}
 	}
 
@@ -173,6 +201,60 @@
 		];
 	}
 
+	var daytime = null;
+
+    var randInt = function(min, max) {
+        var rand = min - 0.5 + Math.random() * (max - min + 1);
+        rand = Math.round(rand);
+        return rand;
+    };
+
+	var updateBackground = function (images, newDaytime) {
+		if (newDaytime === daytime) {
+			return ;
+		}
+		daytime = newDaytime;
+		images = Array.isArray(images) ? images : [];
+		if (images.length > 0) {
+			var idx = randInt(0, images.length-1);
+            $('#display')
+                .css('background-image', 'url("img/' + images[idx] + '")')
+                .addClass('background-image')
+                .removeClass('black');
+		} else {
+			$('#display')
+				.css('background-image', 'none')
+				.removeClass('background-image')
+				.addClass('black');
+		}
+	};
+
+	var updateDateTime = function () {
+        var time = moment().utcOffset(timezone);
+        if (time.hours() > 5 && time.hours() < 11) {
+            updateBackground(morning_images, 'morning');
+        } else if (time.hours() < 16) {
+            // daylight
+			updateBackground(daylight_images, 'day');
+        } else if (time.hours() < 21) {
+            // everning
+			updateBackground(everning_images, 'everning');
+        } else if (time.hours() <= 23) {
+        	// night
+			updateBackground(night_images, 'night');
+		} else {
+            updateBackground([], null);
+		}
+
+        // Set the current time and date on the clock
+        if ($('#time').length) {
+            $('#time').html(time.format(formatTime));
+        }
+        if ($('#date').length) {
+            $('#date').html(time.format(formatDate));
+        }
+	};
+
 	$(window).load(function() {
 		moment().utcOffset(timezone);
 		// Fetch the weather data for right now
@@ -183,22 +265,11 @@
 			queryYahoo();
 		}, waitBetweenWeatherQueriesMS);
 
-		// Set the current time and date on the clock
-		if ($('#time').length) {
-			$('#time').html(moment().utcOffset(timezone).format(formatTime));
-		}
-		if ($('#date').length) {
-			$('#date').html(moment().utcOffset(timezone).format(formatDate));
-		}
+		updateDateTime();
 
 		// Refresh the time and date every second
 		setInterval(function(){
-			if ($('#time').length) {
-				$('#time').html(moment().utcOffset(timezone).format(formatTime));
-			}
-			if ($('#date').length) {
-				$('#date').html(moment().utcOffset(timezone).format(formatDate));
-			}
+			updateDateTime();
 		}, 1000);
 	});
 }());
