@@ -213,33 +213,38 @@
 		if (newDaytime === daytime) {
 			return ;
 		}
-		daytime = newDaytime;
 		images = Array.isArray(images) ? images : [];
 		if (images.length > 0) {
 			var idx = randInt(0, images.length-1);
             $('#display')
                 .css('background-image', 'url("img/' + images[idx] + '")')
                 .addClass('background-image')
+				.addClass('daytime-' + newDaytime)
+				.removeClass('daytime-' + daytime)
                 .removeClass('black');
 		} else {
 			$('#display')
 				.css('background-image', 'none')
+				.removeClass('daytime-' + daytime)
+				.removeClass('daytime-' + newDaytime)
 				.removeClass('background-image')
 				.addClass('black');
 		}
+        daytime = newDaytime;
 	};
 
 	var updateDateTime = function () {
         var time = moment().utcOffset(timezone);
+
         if (time.hours() > 5 && time.hours() < 11) {
             updateBackground(morning_images, 'morning');
-        } else if (time.hours() < 16) {
+        } else if (time.hours() >=11 && time.hours() < 16) {
             // daylight
 			updateBackground(daylight_images, 'day');
-        } else if (time.hours() < 21) {
+        } else if (time.hours() >= 16 && time.hours() < 21) {
             // everning
 			updateBackground(everning_images, 'everning');
-        } else if (time.hours() <= 23) {
+        } else if (time.hours() >= 21 && time.hours() <= 23) {
         	// night
 			updateBackground(night_images, 'night');
 		} else {

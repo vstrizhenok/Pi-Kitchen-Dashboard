@@ -17,6 +17,22 @@ color: inherit;
 text-decoration: inherit;
 }
 
+.daytime-morning {
+    color: #FFFFFF;
+}
+
+.daytime-day {
+    color: #444444;
+}
+
+.daytime-everning {
+    color: #555555;
+}
+
+.daytime-night {
+    color: #CCCCCC;
+}
+
 #wrapper {
 position: fixed;
 width: 100%;
@@ -91,7 +107,7 @@ height: 100px;
 }
 
 .day {
-font-size: 4.5vmin;
+font-size: 6.5vmin;
 margin-bottom: 1.5vmin;
 }
 .desc {
@@ -129,14 +145,14 @@ font-size: 2.5vmin;
 font-size: 15vmin;
 }
 #date {
-font-size: 6.5vmin;
-color: #889988;
+font-size: 7vmin;
+/*color: #889988;*/
 }
 
 #currentlyWrapper {
 display: inline-block;
 height: 100%;
 width: 100%;
-background: rgba(255,255,255,0.2);
+background: rgba(0,0,0,0.1);
 padding-top: 4vh;
 }
