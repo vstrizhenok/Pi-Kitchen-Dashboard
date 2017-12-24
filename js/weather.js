@@ -56,11 +56,11 @@
 	/*****************************************************/
 	/*************************************************************************/
 
-	function resolveTemp(temp, sign) {
-		sign || (sign = '');
+	function resolveTemp(temp, useSign) {
+        useSign = !!useSign;
 		if (unit === 'c' || unit === 'C') {
 			var value = Math.round((parseInt(temp) - 32) / 1.8);
-			temp = '' + (value > 0 ? sign : '') + value;
+			temp = '' + (value > 0 && useSign ? '+' : '') + value;
 		}
 		temp += '&deg;';
 		return temp;
@@ -109,10 +109,10 @@
 			desc.html(forecast.text);
 		}
 		if (high.length) {
-			high.html(resolveTemp(forecast.high, '+'));
+			high.html(resolveTemp(forecast.high, true));
 		}
 		if (low.length) {
-			low.html(resolveTemp(forecast.low, '-'));
+			low.html(resolveTemp(forecast.low, true));
 		}
 	}
 
