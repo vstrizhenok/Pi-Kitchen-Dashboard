@@ -7,16 +7,18 @@
 	/*********************************/
 	// USER EDITABLE LINES - Change these to match your location and preferences!
 
+	var timezone = 180;
+
 	// Your Yahoo WOEID code
 	// Find your WOEID code at http://zourbuth.com/tools/woeid/
-	var woeid = 23416998;
+	var woeid = 834463;
 	
 	// Your temperature unit measurement
 	// This bit is simple, 'c' for Celcius, and 'f' for Fahrenheit
 	var unit = 'c';
 	
 	// Format for date and time
-	var formatTime = 'h:mm:ss a'
+	var formatTime = 'H : mm' // ss
 	var formatDate = 'dddd, MMMM Do'
 
 	// Yahoo! query interval (milliseconds)
@@ -172,6 +174,7 @@
 	}
 
 	$(window).load(function() {
+		moment().utcOffset(timezone);
 		// Fetch the weather data for right now
 		queryYahoo();
 
@@ -182,19 +185,19 @@
 
 		// Set the current time and date on the clock
 		if ($('#time').length) {
-			$('#time').html(moment().format(formatTime));
+			$('#time').html(moment().utcOffset(timezone).format(formatTime));
 		}
 		if ($('#date').length) {
-			$('#date').html(moment().format(formatDate));
+			$('#date').html(moment().utcOffset(timezone).format(formatDate));
 		}
 
 		// Refresh the time and date every second
 		setInterval(function(){
 			if ($('#time').length) {
-				$('#time').html(moment().format(formatTime));
+				$('#time').html(moment().utcOffset(timezone).format(formatTime));
 			}
 			if ($('#date').length) {
-				$('#date').html(moment().format(formatDate));
+				$('#date').html(moment().utcOffset(timezone).format(formatDate));
 			}
 		}, 1000);
 	});
